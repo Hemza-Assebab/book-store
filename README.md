@@ -1,3 +1,6 @@
+# Navigation 📌
+- [API Endpoints ↔️](#api-endpoints-)
+- [Database Schema 📅](#database-schema-)
 # API Endpoints ↔️
 ## User Microservice 👤
 | Method | Endpoint            | Purpose                  |
