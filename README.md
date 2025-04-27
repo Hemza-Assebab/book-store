@@ -1,5 +1,5 @@
 # Navigation 📌
-- [API Endpoints ↔️](#api-endpoints-)
+- [API Endpoints ↔️](#api-endpoints-%EF%B8%8F)
 - [Database Schema 📅](#database-schema-)
 # API Endpoints ↔️
 ## User Microservice 👤
