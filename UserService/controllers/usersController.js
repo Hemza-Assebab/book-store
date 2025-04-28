@@ -1,6 +1,7 @@
-const User = require("../models/user");
 const mongoose = require("mongoose");
+const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
     try {
@@ -24,8 +25,49 @@ const register = async (req, res) => {
     }
 }
 
-const login = (req, res) => {
-    // Not generated yet
+const login = async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        if (!(email && password)) return res.status(400).json({ message: "All fields are required !" });
+
+        const user = await User.findOne({email});
+        if (!user) return res.status(400).json({ message: "Invalid email or password !" });
+
+        const isCredentialsCorrect = await bcrypt.compare(password, user.password);
+        if (!isCredentialsCorrect) return res.status(400).json({ message: "Invalid email or password !" });
+
+        const accessToken = jwt.sign(
+            {id: user._id, email: user.email, role: user.role},
+            process.env.SECRET_ACCESS_TOKEN,
+            {expiresIn: "1min"}
+        );
+
+        const refreshAccessToken = jwt.sign(
+            {id: user._id},
+            process.env.REFRESH_SECRET_TOKEN,
+            { expiresIn: '7d' }
+        );
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.ENV === "PROD"
+        });
+
+        res.cookie("refreshAccessToken", refreshAccessToken, {
+            httpOnly: true,
+            secure: process.env.ENV === "PROD"
+        });
+
+        res.status(200).json({ message: "You are logged in !" });
+    } catch (e) {
+        res.status(500).json({ Error: e.message});
+    }
+}
+
+const logout = async (req, res) => {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshAccessToken");
+    res.status(200).json({message: "Logged out successfully !"});
 }
 
 const index = async (req, res) => {
@@ -119,6 +161,7 @@ const destroy = async (req, res) => {
 module.exports = {
     register,
     login,
+    logout,
     index,
     show,
     update,

@@ -1,12 +1,14 @@
 const express = require("express");
-const {register, login, index, show, update, destroy} = require("../controllers/usersController");
+const {register, login, logout, index, show, update, destroy} = require("../controllers/usersController");
+const authAdminMiddleware = require("../middlewares/adminAuth");
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/", index);
-router.get("/:id", show);
-router.put("/:id", update);
-router.delete("/:id", destroy);
+router.post("/logout", logout);
+router.get("/", authAdminMiddleware, index);
+router.get("/:id", authAdminMiddleware, show);
+router.put("/:id", authAdminMiddleware, update);
+router.delete("/:id", authAdminMiddleware, destroy);
 
 module.exports = router;
