@@ -36,17 +36,8 @@ const login = async (req, res) => {
         const isCredentialsCorrect = await bcrypt.compare(password, user.password);
         if (!isCredentialsCorrect) return res.status(400).json({ message: "Invalid email or password !" });
 
-        const accessToken = jwt.sign(
-            {id: user._id, email: user.email, role: user.role},
-            process.env.SECRET_ACCESS_TOKEN,
-            {expiresIn: "1min"}
-        );
-
-        const refreshAccessToken = jwt.sign(
-            {id: user._id},
-            process.env.REFRESH_SECRET_TOKEN,
-            { expiresIn: '7d' }
-        );
+        const accessToken = generateToken(user);
+        const refreshAccessToken = generateRefreshToken(user);
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
@@ -61,6 +52,46 @@ const login = async (req, res) => {
         res.status(200).json({ message: "You are logged in !" });
     } catch (e) {
         res.status(500).json({ Error: e.message});
+    }
+}
+
+const generateToken = (user) => {
+    return jwt.sign(
+        {id: user._id, email: user.email, role: user.role},
+        process.env.SECRET_ACCESS_TOKEN,
+        {expiresIn: "1min"}
+    );
+}
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(
+        {id: user._id, role: user.role},
+        process.env.REFRESH_SECRET_TOKEN,
+        { expiresIn: '3min' }
+    );
+}
+
+const refreshAccessToken = (req, res) => {
+    const token = req.cookies.refreshAccessToken;
+    if (!token) return res.status(401).json({ message: 'Refresh token not found' });
+  
+    try {
+        const decoded = jwt.verify(token, process.env.REFRESH_SECRET_TOKEN);
+        console.log(decoded);
+        
+
+        const newAccessToken = jwt.sign({ id: decoded._id, role: decoded.role }, process.env.SECRET_ACCESS_TOKEN, {
+        expiresIn: '1min'
+        });
+
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "PROD",
+        });
+  
+        res.status(200).json({ message: 'Access token refreshed' });
+    } catch (err) {
+        res.status(403).json({ message: 'Invalid refresh token' });
     }
 }
 
@@ -162,6 +193,7 @@ module.exports = {
     register,
     login,
     logout,
+    refreshAccessToken,
     index,
     show,
     update,
