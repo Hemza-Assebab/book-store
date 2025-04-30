@@ -4,15 +4,10 @@ const cookieParser = require("cookie-parser");
 const inventoryRouter = require("./routes/inventoryRoutes");
 const routeNotFound = require("./middlewares/routeNotFound");
 const requestBodyTrim = require("./middlewares/requestBodyTrim");
-const cors = require("cors");
 
 const app = express();
 connectDB();
 
-app.use(cors({
-    origin: "*",
-    credentials: true
-}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestBodyTrim);
