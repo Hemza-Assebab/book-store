@@ -28,18 +28,10 @@ const index = async (req, res) => {
 const show = async (req, res) => {
     try {
         const {bookId} = req.params;
-        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
         
-        // const response = await fetch(`http://localhost:3001/api/books/${bookId}`, {
-        //     method: "GET",
-        //     headers: {
-        //         Cookie: req.headers.cookie || "",
-        //     }
-        // });
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
 
-        // if (response.status == 404) return res.status(404).json({message: "Book not found !"});
-
-        const stock = await Inventory.findById(bookId, {quantity: 1});
+        const stock = await Inventory.findOne({bookId: bookId}, {quantity: 1, _id: 0});
         if (!stock) return res.status(404).json({message: "Book Stock Not Found !"});
         res.status(200).json(stock);
     } catch (e) {
@@ -47,13 +39,31 @@ const show = async (req, res) => {
     }
 }
 
-const update = async (req, res) => {
+// const update = async (req, res) => {
 
+// }
+
+const destroy = async (req, res) => {
+    try {
+        const {bookId} = req.body;
+        console.log(bookId);
+        
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
+
+        const deletedStock = await Inventory.deleteOne({bookId: bookId});
+
+        if (!deletedStock) return res.status(404).json({message: "Book Stock Not Found!"});
+
+        res.status(200).json({message: "Book Stock Deleted"});
+    } catch (e) {
+        res.status(500).json({message: e.message});
+    }
 }
 
 module.exports = {
     store,
     index,
     show,
+    destroy,
     // update,
 }

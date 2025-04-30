@@ -117,6 +117,17 @@ const destroy = async (req, res) => {
     try {
         const {id} = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid ID !' });
+        
+        const response = await fetch (`http://localhost:3002/api/inventory/`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": req.headers.cookie || "",
+            },
+            body: JSON.stringify({bookId: id}),
+        });
+
+        if (!response.ok) return res.status(404).json({message: "Book doesn't exist in stock !"});
 
         const bookDeleted = await Book.findByIdAndDelete(id);
         if (!bookDeleted) return res.status(404).json({message: "Book not found !"});
