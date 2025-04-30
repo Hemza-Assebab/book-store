@@ -59,7 +59,7 @@ const generateToken = (user) => {
     return jwt.sign(
         {id: user._id, email: user.email, role: user.role},
         process.env.SECRET_ACCESS_TOKEN,
-        {expiresIn: "1min"}
+        {expiresIn: "60min"}
     );
 }
 
@@ -67,7 +67,7 @@ const generateRefreshToken = (user) => {
     return jwt.sign(
         {id: user._id, role: user.role},
         process.env.REFRESH_SECRET_TOKEN,
-        { expiresIn: '3min' }
+        { expiresIn: '120min' }
     );
 }
 
@@ -76,12 +76,10 @@ const refreshAccessToken = (req, res) => {
     if (!token) return res.status(401).json({ message: 'Refresh token not found' });
   
     try {
-        const decoded = jwt.verify(token, process.env.REFRESH_SECRET_TOKEN);
-        console.log(decoded);
-        
+        const decoded = jwt.verify(token, process.env.REFRESH_SECRET_TOKEN);        
 
         const newAccessToken = jwt.sign({ id: decoded._id, role: decoded.role }, process.env.SECRET_ACCESS_TOKEN, {
-        expiresIn: '1min'
+        expiresIn: '60min'
         });
 
         res.cookie('accessToken', newAccessToken, {

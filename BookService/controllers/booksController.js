@@ -26,15 +26,29 @@ const show = async (req, res) => {
 
 const store = async (req, res) => {
     try {
-        const {title, author, description, price, category, isbn} = req.body;
+        const {title, author, description, price, category, isbn, quantity} = req.body;
         if (!(title && author && description && price && category && isbn)) return res.status(400).json({message: "All field are required !"});
         if (!(typeof Number(price) === 'number' && !isNaN(price))) return res.status(400).json({message: "Invalid price !"});
+        if (!(typeof Number(quantity) === 'number' && !isNaN(quantity))) return res.status(400).json({message: "Invalid quantity !"});
 
         const isbnExists = await Book.findOne({isbn: isbn});
         if (isbnExists) return res.status(400).json({message: "ISBN already exists !"});
 
         const newBook = new Book({title, author, description, price, category, isbn});
+        
+        const response = await fetch ("http://localhost:3002/api/inventory", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": req.headers.cookie || "",
+            },
+            body: JSON.stringify({bookId: newBook._id, quantity}),
+        });
+
+        if (!response.ok) return res.status(500).json({message: "Book wasn't added to stock !"});
+
         await newBook.save();
+        
         return res.status(201).json({message: "Book Added !"});
     } catch (e) {
         res.status(500).json({message: "Server error !"});
