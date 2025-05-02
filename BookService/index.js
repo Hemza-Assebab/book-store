@@ -4,6 +4,7 @@ const routeNotFound = require("./middlewares/routeNotFound");
 const requestBodyTrim = require("./middlewares/requestBodyTrim");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
+const consumeMessage = require("./services/consumeMessage");
 
 const app = express();
 connectDB();
@@ -16,4 +17,5 @@ app.use(routeNotFound);
 
 app.listen(process.env.PORT, () => {
     console.log(`Book service running on http://localhost:${process.env.PORT}`);
+    consumeMessage();
 })
