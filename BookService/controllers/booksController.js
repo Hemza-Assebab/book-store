@@ -15,7 +15,7 @@ const show = async (req, res) => {
         const {id} = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid ID !' });
 
-        const book = await Book.findOne({_id: id});
+        const book = await Book.findOne({_id: id}, {__v: 0});
         if (!book) return res.status(404).json({message: "Book not found !"});
 
         return res.status(200).json({message: "Book found !", book});
@@ -117,6 +117,16 @@ const destroy = async (req, res) => {
     try {
         const {id} = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid ID !' });
+        
+        const response = await fetch (`http://localhost:3002/api/inventory/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Cookie": req.headers.cookie || "",
+            },
+        });
+
+        if (!response.ok) return res.status(404).json({message: "Book doesn't exist in stock !"});
 
         const bookDeleted = await Book.findByIdAndDelete(id);
         if (!bookDeleted) return res.status(404).json({message: "Book not found !"});

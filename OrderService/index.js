@@ -1,9 +1,9 @@
 const express = require("express");
 const connectDB = require("./config/db");
-const cookieParser = require("cookie-parser");
-const inventoryRouter = require("./routes/inventoryRoutes");
+const ordersRouter = require("./routes/ordersRouter");
 const routeNotFound = require("./middlewares/routeNotFound");
 const requestBodyTrim = require("./middlewares/requestBodyTrim");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 connectDB();
@@ -11,9 +11,9 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestBodyTrim);
-app.use("/api/inventory", inventoryRouter);
+app.use("/api/orders", ordersRouter);
 app.use(routeNotFound);
 
 app.listen(process.env.PORT, () => {
-    console.log(`Inventory service running on http://localhost:${process.env.PORT}`); 
-})
+    console.log(`Order service running on http://localhost:${process.env.PORT}`);
+});

@@ -28,32 +28,52 @@ const index = async (req, res) => {
 const show = async (req, res) => {
     try {
         const {bookId} = req.params;
-        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
         
-        // const response = await fetch(`http://localhost:3001/api/books/${bookId}`, {
-        //     method: "GET",
-        //     headers: {
-        //         Cookie: req.headers.cookie || "",
-        //     }
-        // });
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
 
-        // if (response.status == 404) return res.status(404).json({message: "Book not found !"});
-
-        const stock = await Inventory.findById(bookId, {quantity: 1});
-        if (!stock) return res.status(404).json({message: "Book Stock Not Found !"});
+        const stock = await Inventory.findOne({bookId: bookId}, {quantity: 1, _id: 0});
+        if (!stock) return res.status(404).json({message: "Book Not Found In Stock!"});
         res.status(200).json(stock);
     } catch (e) {
-        res.status(500).json({message: e.message});
+        res.status(500).json({message: "Server Error !"});
     }
 }
 
 const update = async (req, res) => {
+    try {
+        const {bookId} = req.params;
+        const {quantity} = req.body;
 
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
+        if (!(typeof Number(quantity) === 'number' && !isNaN(quantity))) return res.status(400).json({message: "Invalid quantity !"});
+
+        const updatedStock = await Inventory.updateOne({bookId: bookId}, {$set: {quantity: quantity}});
+        if (!updatedStock) return res.status(404).json({message: "Book Not Found In Stock!"});
+        res.status(200).json({message: "Stock Updated !"});
+    } catch (e) {
+        res.status(500).json({message: "Server Error !"});
+    }
+}
+
+const destroy = async (req, res) => {
+    try {
+        const {bookId} = req.params;
+        
+        if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).json({ message: 'Invalid ID !' });
+
+        const deletedStock = await Inventory.deleteOne({bookId: bookId});
+        if (!deletedStock) return res.status(404).json({message: "Book Stock Not Found!"});
+
+        res.status(200).json({message: "Book Stock Deleted"});
+    } catch (e) {
+        res.status(500).json({message: "Server Error !"});
+    }
 }
 
 module.exports = {
     store,
     index,
     show,
-    // update,
+    destroy,
+    update,
 }
