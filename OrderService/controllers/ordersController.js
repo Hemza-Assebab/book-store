@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const mongoose = require("mongoose");
+const sendMessage = require("../providers/sendMessgae");
 
 const store = async (req, res) => {
     try {
@@ -41,6 +42,7 @@ const store = async (req, res) => {
 
         if (!updateInventoryResponse.ok) return res.status(500).json({message: "Error while updating the stock"});
         await order.save();
+        await sendMessage({bookId: bookId});
         return res.status(201).json({message: "Book Ordered !"});
     } catch (e) {
         return res.status(500).json({message: "Server Error !"});

@@ -23,7 +23,11 @@ const BookSchema = new mongoose.Schema({
     isbn: {
         type: String,
         required: true,
-    }
+    },
+    bought: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const Book = mongoose.model("Book", BookSchema);
