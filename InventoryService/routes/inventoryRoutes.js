@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { store, index, show, update, destroy } = require("../controllers/inventoryController");
-const authAdminMiddleware = require("../middlewares/adminAuth");
+const authMiddleware = require("../middlewares/auth");
 
-router.post("/", authAdminMiddleware, store);
-router.get("/", authAdminMiddleware, index);
-router.get("/:bookId", authAdminMiddleware, show);
-router.put("/:bookId", authAdminMiddleware, update);
-router.delete("/:bookId", authAdminMiddleware, destroy);
+router.post("/", authMiddleware, store);
+router.get("/", authMiddleware, index);
+router.get("/:bookId", authMiddleware, show);
+router.put("/:bookId", authMiddleware, update);
+router.delete("/:bookId", authMiddleware, destroy);
 
 module.exports = router;
