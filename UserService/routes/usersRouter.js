@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const {register, login, logout, refreshAccessToken, index, show, update, destroy} = require("../controllers/usersController");
 const authAdminMiddleware = require("../middlewares/adminAuth");

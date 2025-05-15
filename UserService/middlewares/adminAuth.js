@@ -1,3 +1,4 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const authAdminMiddleware = (req, res, next) => {
     const token = req.cookies.accessToken;    
