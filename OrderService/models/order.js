@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const OrderSchema = new mongoose.Schema({
     userId: {

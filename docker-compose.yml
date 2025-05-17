@@ -3,17 +3,73 @@ version: "3.8"
 services:
   mongo:
     image: mongo
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    depends_on:
+      - mongo
   
   user-service:
     build: ./UserService
+    container_name: user-service
     ports:
       - "3000:3000"
     depends_on:
       - mongo
+      - rabbitmq
+    volumes:
+      - ./UserService:/app
+
+  book-service:
+    build: ./BookService
+    container_name: book-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+      - rabbitmq
+      - user-service
+    volumes:
+      - ./BookService:/app
+
+  inventory-service:
+    build: ./InventoryService
+    container_name: inventory-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo
+      - rabbitmq
+      - user-service
+      - book-service
+    volumes:
+      - ./InventoryService:/app
+
+  order-service:
+    build: ./OrderService
+    container_name: order-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongo
+      - rabbitmq
+      - user-service
+      - book-service
+      - inventory-service
+    volumes:
+      - ./OrderService:/app
 
 volumes:
   mongo_data:

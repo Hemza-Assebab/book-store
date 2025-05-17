@@ -1,5 +1,6 @@
 const Book = require("../models/book");
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const index = async (req, res) => {
     try {

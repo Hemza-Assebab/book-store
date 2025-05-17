@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const inventoryRouter = require("./routes/inventoryRoutes");
 const routeNotFound = require("./middlewares/routeNotFound");
 const requestBodyTrim = require("./middlewares/requestBodyTrim");
+require("dotenv").config();
 
 const app = express();
 connectDB();

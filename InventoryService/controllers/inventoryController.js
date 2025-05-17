@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Inventory = require("../models/inventory");
 const mongoose = require("mongoose");
 

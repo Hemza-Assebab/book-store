@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const InventorySchema = new mongoose.Schema({
     bookId: {

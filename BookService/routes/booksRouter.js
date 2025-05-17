@@ -3,6 +3,7 @@ const { index, show, store, update, destroy } = require("../controllers/booksCon
 const authAdminMiddleware = require("../middlewares/adminAuth");
 const authMiddleware = require("../middlewares/auth");
 const router = express.Router();
+require("dotenv").config();
 
 router.get("/", authMiddleware, index);
 router.get("/:id", authMiddleware, show);

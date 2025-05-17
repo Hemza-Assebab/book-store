@@ -1,6 +1,7 @@
 const Order = require("../models/order");
 const mongoose = require("mongoose");
 const sendMessage = require("../providers/sendMessgae");
+require("dotenv").config();
 
 const store = async (req, res) => {
     try {

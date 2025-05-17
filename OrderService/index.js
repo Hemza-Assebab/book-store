@@ -4,6 +4,7 @@ const ordersRouter = require("./routes/ordersRouter");
 const routeNotFound = require("./middlewares/routeNotFound");
 const requestBodyTrim = require("./middlewares/requestBodyTrim");
 const cookieParser = require("cookie-parser");
+require("dotenv").config();
 
 const app = express();
 connectDB();

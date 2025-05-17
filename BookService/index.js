@@ -5,6 +5,7 @@ const requestBodyTrim = require("./middlewares/requestBodyTrim");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const consumeMessage = require("./services/consumeMessage");
+require("dotenv").config();
 
 const app = express();
 connectDB();
