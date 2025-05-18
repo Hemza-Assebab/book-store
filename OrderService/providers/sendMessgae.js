@@ -1,7 +1,7 @@
 const amqp = require("amqplib");
 
 const sendMessage = async (msg) => {
-    const conn = await amqp.connect("amqp://rabbitmq");
+    const conn = await amqp.connect("amqp://test:test@rabbitmq:5672/myvhost");
     console.log("rabbitMQ connected !");
     const ch = await conn.createChannel();
     const queue = "tasks";
